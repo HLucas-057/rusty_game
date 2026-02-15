@@ -548,7 +548,7 @@ body:has(#dashboard-content:not(.hidden))::-webkit-scrollbar {
     color: #ffffff;
     font-size: clamp(0.9rem, 2vw, 1.1rem);
     line-height: 1.6;
-    margin-bottom: 25px;
+    margin: 0px 10px 25px 0px;
     opacity: 0.9;
     text-align: justify;
     padding-right: clamp(10px, 3vw, 70px);
@@ -1091,4 +1091,5 @@ body {
         max-width: 1600px;
         margin: 0 auto;
     }
+
 }
