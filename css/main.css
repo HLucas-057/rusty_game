@@ -249,13 +249,38 @@ body:has(#dashboard-content:not(.hidden))::-webkit-scrollbar {
     transition: width 0.1s ease-out; /* Animation fluide */
 }
 
-/* Container pour l'animation Lottie dans le header */
 #lottie-rusty-container {
     width: clamp(100px, 20vw, 200px);
     height: clamp(65px, 13vw, 130px);
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-shrink: 0;
+    overflow: visible; /* Important pour laisser le scale déborder si besoin */
+}
+
+/* LA RÈGLE CRUCIALE POUR TOUS LES ÉCRANS */
+#lottie-rusty-container svg,
+#lottie-rusty-container canvas,
+.in-header {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    object-fit: contain !important;
+}
+
+/* Quand Rusty est dans le header après le chargement */
+#lottie-rusty.in-header {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+#lottie-rusty.in-header svg,
+#lottie-rusty.in-header canvas {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
 }
 
 /* Classe pour masquer le header (scroll vers le bas) */
@@ -421,7 +446,7 @@ body:has(#dashboard-content:not(.hidden))::-webkit-scrollbar {
     filter: drop-shadow(-5px 5px 0px rgba(0,0,0,0.3));
 }
 
-/* POSITIONNEMENT DES OBJETS (EN % DU CONTAINER) */
+/* 📍 POSITIONNEMENT DES OBJETS (EN % DU CONTAINER) */
 /* Ces valeurs sont calculées selon la position dans l'image de fond */
 
 /* Haltère */
@@ -548,7 +573,7 @@ body:has(#dashboard-content:not(.hidden))::-webkit-scrollbar {
     color: #ffffff;
     font-size: clamp(0.9rem, 2vw, 1.1rem);
     line-height: 1.6;
-    margin: 0px 10px 25px 0px;
+    margin-bottom: 25px;
     opacity: 0.9;
     text-align: justify;
     padding-right: clamp(10px, 3vw, 70px);
@@ -951,6 +976,8 @@ body {
     #lottie-rusty-container {
         order: -1;
         margin-bottom: 10px;
+        width: 180px; /* Taille fixe sur tablette */
+        height: 120px;
     }
 
     /* Centre les stats */
@@ -982,18 +1009,57 @@ body {
 
 /* === SMARTPHONES (≤ 768px) === */
 @media (max-width: 768px) {
-
+    /* Réduit le padding-top pour gagner de l'espace */
     .world-content {
         padding-top: 50px;
     }
 
-    .introduction {
-        min-height: 75vh;
+    /* Animation Rusty : taille fixe pour éviter l'écrasement */
+    #lottie-rusty-container {
+        width: 150px !important;
+        height: 100px !important;
+        min-width: 150px;
+        min-height: 100px;
     }
 
-    /* Réduit le padding de la carte intro */
+    /* Section introduction : réduit les espacements */
+    .introduction {
+        min-height: 75vh;
+        padding: 0 clamp(15px, 4vw, 30px);
+        padding-top: 20px; /* Réduit l'espace au-dessus */
+        padding-bottom: 30px; /* Réduit l'espace en dessous */
+    }
+
+    /* Carte intro avec moins de padding */
     .intro-card {
-        padding: 15px;
+        padding: 20px 15px;
+    }
+
+    /* Titre plus compact */
+    .main-title {
+        margin-bottom: 20px;
+    }
+
+    /* Texte mission plus compact */
+    .mission-text p {
+        margin-bottom: 12px;
+    }
+
+    .mission-highlight {
+        margin-top: 15px;
+    }
+
+    /* Zone de jeu : réduit l'espace au-dessus et en dessous */
+    .search-area {
+        padding: clamp(30px, 6vh, 50px) clamp(15px, 4vw, 30px);
+        min-height: 85vh;
+    }
+
+    /* Boutique : réduit l'espace entre l'image et le titre */
+    .shop-section h2 {
+        padding-top: clamp(40px, 8vh, 60px); /* Réduit l'espace au-dessus */
+        padding-bottom: clamp(15px, 3vh, 25px); /* Réduit l'espace en dessous */
+        margin-bottom: 0;
     }
 
     /* Footer en colonne */
@@ -1039,13 +1105,63 @@ body {
     }
 }
 
+/* === PETITS SMARTPHONES (≤ 429px) === */
 @media (max-width: 429px) {
+    /* Header encore plus compact */
+    .world-content {
+        padding-top: 120px;
+    }
 
-.introduction {
-    min-height: 90vh;
-}
+    /* Animation Rusty : taille réduite mais proportionnelle */
+    #lottie-rusty-container {
+        width: 130px !important;
+        height: 85px !important;
+        min-width: 130px;
+        min-height: 85px;
+    }
 
-    /* Réduit la taille du titre */
+    /* Introduction très compacte */
+    .introduction {
+        min-height: 90vh;
+        padding: 0 15px;
+        padding-top: 15px;
+        padding-bottom: 25px;
+    }
+
+    .intro-card {
+        padding: 15px 10px;
+    }
+
+    .main-title {
+        margin-bottom: 15px;
+    }
+
+    .mission-text p {
+        margin-bottom: 10px;
+    }
+
+    .mission-highlight {
+        margin-top: 12px;
+        padding: 12px 20px;
+    }
+
+    /* Zone de jeu compacte */
+    .search-area {
+        padding: 25px 15px;
+        min-height: 80vh;
+    }
+
+    /* Boutique : espace minimal entre image et titre */
+    .shop-section {
+        padding-bottom: 30px;
+    }
+
+    .shop-section h2 {
+        padding-top: 30px;
+        padding-bottom: 15px;
+    }
+
+    /* Réduit la taille du titre Rusty */
     .rusty-stats h1 {
         font-size: 1.5rem;
     }
@@ -1068,116 +1184,602 @@ body {
         width: 15px !important;
         height: 15px !important;
     }
-}
 
-@media screen and (min-width: 1600px) {
-    /* On réduit la zone pour remonter le contenu */
-    .introduction {
-        min-height: 60vh; 
-        padding-top: 0;
-    }
-
-    .world-content {
-        padding-top: 180px; 
-    }
-
-    .intro-card {
-        top: 40%; 
-        transform: translateY(-20%);
+    /* Carrousel plus compact */
+    .carousel-inner {
+        padding: 15px 20px 40px;
+        min-height: 380px;
     }
 }
 
-/* === TRÈS GRANDS ÉCRANS (≥ 2560px) === */
-@media (min-width: 2560px) {
-
+/* === GRANDS ÉCRANS (≥ 1440px) - MacBook Pro 14/16" === */
+@media (min-width: 1440px) {
+    /* Header avec plus d'espace */
     .rusty-header {
-        padding: 40px 100px; /* Plus de hauteur et de marge latérale */
-        border-bottom: 4px solid rgba(152, 251, 152, 0.3); /* Bordure plus marquée */
+        padding: 25px 80px;
     }
 
     .rusty-stats h1 {
-        font-size: 5rem; /* Le nom RUSTY devient massif */
-        letter-spacing: 5px;
+        font-size: 3rem;
     }
 
     .stats-grid {
-        gap: 50px; /* Plus d'espace entre Poids, Taille et État */
-        font-size: 1.5rem; /* Texte des stats plus lisible */
+        font-size: 1.1rem;
+        gap: 30px;
+    }
+
+    .energy-container {
+        max-width: 450px;
+        height: 18px;
+    }
+
+    /* Container Lottie avec taille fixe pour éviter l'écrasement */
+    #lottie-rusty-container {
+        width: 220px !important;
+        height: 150px !important;
+        min-width: 220px;
+        min-height: 150px;
+    }
+
+    /* Ajustement de l'introduction pour éviter trop d'espace vide */
+    .introduction {
+        min-height: 70vh;
+        padding: 0 80px;
+    }
+
+    .intro-card {
+        max-width: 900px;
+    }
+
+    .main-title {
+        font-size: 4.5rem;
+    }
+
+    .mission-text p {
+        font-size: 1.6rem;
+    }
+
+    /* Zone de jeu optimisée */
+    .search-area {
+        padding: 80px 80px;
+    }
+
+    .game-layer {
+        max-width: 1600px;
+    }
+
+    /* Boutique avec plus d'espace */
+    .carousel-inner {
+        width: 85%;
+        max-width: 1400px;
+    }
+
+    .shop-card-left img {
+        height: 500px !important;
+    }
+
+    .shop-card-right h3 {
+        font-size: 3rem;
+    }
+
+    .shop-card-right .description {
+        font-size: 1.2rem;
+        line-height: 1.8;
+    }
+}
+
+/* === ÉCRANS 1920px (Full HD / iMac 27") === */
+@media (min-width: 1920px) {
+    .rusty-header {
+        padding: 30px 100px;
+    }
+
+    .rusty-stats h1 {
+        font-size: 3.5rem;
+    }
+
+    .stats-grid {
+        font-size: 1.2rem;
+        gap: 35px;
+    }
+
+    .energy-container {
+        max-width: 500px;
+        height: 20px;
+    }
+
+    /* Container Lottie adapté pour Full HD */
+    #lottie-rusty-container {
+        width: 250px !important;
+        height: 170px !important;
+        min-width: 250px;
+        min-height: 170px;
+    }
+
+    /* Introduction compacte mais lisible */
+    .world-content {
+        padding-top: 200px;
+    }
+
+    .introduction {
+        min-height: 65vh;
+        padding: 0 100px;
+    }
+
+    .intro-card {
+        max-width: 1000px;
+    }
+
+    .main-title {
+        font-size: 5rem;
+    }
+
+    .mission-text p {
+        font-size: 1.7rem;
+    }
+
+    /* Zone de jeu centrée */
+    .search-area {
+        padding: 100px 100px;
+    }
+
+    .game-layer {
+        max-width: 1700px;
+    }
+
+    /* Boutique élargie */
+    .carousel-inner {
+        max-width: 1500px;
+    }
+
+    .shop-card-left img {
+        height: 550px !important;
+    }
+
+    /* Footer harmonieux */
+    .rusty-footer {
+        padding: 80px 100px 40px;
+    }
+
+    .footer-container {
+        max-width: 1600px;
+        gap: 80px;
+    }
+
+    .footer-section h3 {
+        font-size: 1.6rem;
+    }
+
+    .social-links a {
+        font-size: 2.8rem;
+    }
+
+    .software-grid {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 25px;
+    }
+
+    .software-item {
+        font-size: 1.1rem;
+        padding: 12px 20px;
+    }
+}
+
+/* === ÉCRANS 2560px (WQHD / iMac 5K) === */
+@media (min-width: 2560px) {
+
+    #lottie-rusty {
+    width: 450px !important; /* On passe de 350px à 450px */
+    height: 450px !important;
+}
+
+    .ui-container {
+        max-width: 650px; /* On élargit la barre de progression pour l'équilibre */
+    }
+
+    .loading-text {
+        font-size: 1.8rem; /* Texte plus lisible */
+    }
+
+    .rusty-header {
+        padding: 40px 120px;
+        border-bottom: 4px solid rgba(152, 251, 152, 0.3);
+    }
+
+    .rusty-stats h1 {
+        font-size: 4.5rem;
+        letter-spacing: 4px;
+    }
+
+    .stats-grid {
+        gap: 45px;
+        font-size: 1.4rem;
         margin: 20px 0;
     }
 
     .energy-container {
-        max-width: 600px; /* Barre d'énergie plus longue */
-        height: 25px; /* Plus épaisse */
+        max-width: 600px;
+        height: 24px;
         border-width: 3px;
     }
 
+    /* Container Lottie adapté pour 5K */
     #lottie-rusty-container {
-        width: 350px; /* L'animation Lottie prend plus de place */
-        height: 250px;
-        object-fit: contain;
+        width: 300px !important;
+        height: 200px !important;
+        min-width: 300px;
+        min-height: 200px;
+    }
+
+    /* Introduction optimisée pour 2560px */
+    .world-content {
+        padding-top: 220px;
     }
 
     .introduction {
-        min-height: 40vh; 
+        min-height: 60vh;
+        padding: 20px 120px;
         display: flex;
-        align-items: flex-start; 
-        padding-top: 50px;
-    }
-
-    .world-content {
-        padding-top: 150px;
+        align-items: center;
     }
 
     .intro-card {
-        max-width: 1400px;
-        margin-top: -100px; 
-        opacity: 1 !important; 
-        transform: none !important; 
-        transition: none !important;
+        max-width: 1200px;
+        position: relative;
+        top: auto;
     }
 
     .main-title {
-        font-size: 7rem; 
+        font-size: 6rem;
+    }
+
+    .mission-text p {
+        font-size: 1.9rem;
+        line-height: 1.7;
+    }
+
+    .mission-highlight {
+        font-size: 1.6rem;
+        padding: 25px 40px;
+    }
+
+    /* Zone de jeu */
+    .search-area {
+        padding: 120px 120px;
+    }
+
+    .game-layer {
+        max-width: 1800px;
+    }
+
+    /* Boutique */
+    .shop-section h2 {
+        font-size: 3.5rem;
+        padding-top: 120px;
+        padding-bottom: 50px;
     }
 
     .carousel-inner {
-        max-width: 1600px;
-        margin: 0 auto;
+        max-width: 1800px;
+        padding: 60px 80px 120px;
+        min-height: 650px;
     }
 
-    /* === AJOUT COHÉRENCE FOOTER === */
+    .shop-card-left {
+        width: 500px;
+    }
+
+    .shop-card-left img {
+        height: 600px !important;
+    }
+
+    .shop-card-right h3 {
+        font-size: 3.5rem;
+    }
+
+    .shop-card-right .price {
+        font-size: 2.2rem;
+    }
+
+    .shop-card-right .description {
+        font-size: 1.4rem;
+        line-height: 1.9;
+        margin-bottom: 30px;
+    }
+
+    .shop-card-right .status-msg {
+        font-size: 1.1rem;
+    }
+
+    /* Boutons carrousel plus gros */
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 90px !important;
+        height: 90px !important;
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    /* Footer */
     .rusty-footer {
-        padding: 100px 50px 40px; /* Plus d'espace en haut et sur les côtés */
+        padding: 100px 120px 50px;
     }
 
     .footer-container {
-        max-width: 1800px; /* On élargit le container pour occuper l'espace */
-        gap: 100px; /* Plus d'espace entre les colonnes */
+        max-width: 1800px;
+        gap: 100px;
     }
 
     .footer-section h3 {
-        font-size: 2rem; /* Titres plus imposants */
+        font-size: 2rem;
         margin-bottom: 40px;
     }
 
     .social-links a {
-        font-size: 3.5rem; /* Icônes LinkedIn/Insta plus grandes */
+        font-size: 3.5rem;
     }
 
     .software-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Items plus larges */
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 30px;
     }
 
     .software-item {
         padding: 15px 25px;
-        font-size: 1.2rem;
+        font-size: 1.3rem;
     }
 
     .footer-bottom {
-        font-size: 1rem;
+        font-size: 1.1rem;
         margin-top: 80px;
     }
 }
 
+/* === ÉCRANS 4K (3840px) === */
+@media (min-width: 3840px) {
+
+    #lottie-rusty {
+        width: 750px !important; 
+        height: 750px !important;
+    }
+
+    .ui-container {
+        max-width: 1000px; 
+    }
+
+    .progress-container {
+        height: 30px; 
+        border-width: 4px;
+    }
+
+    .loading-text {
+        font-size: 2.5rem;
+        margin-top: 30px;
+    }
+
+    #enter-btn {
+        padding: 30px 80px;
+        font-size: 2rem;
+        max-width: 600px;
+    }
+
+    .rusty-header {
+        padding: 50px 150px;
+        border-bottom: 5px solid rgba(152, 251, 152, 0.4);
+    }
+
+    .rusty-stats h1 {
+        font-size: 6rem;
+        letter-spacing: 6px;
+    }
+
+    .stats-grid {
+        gap: 60px;
+        font-size: 1.8rem;
+        margin: 25px 0;
+    }
+
+    .energy-container {
+        max-width: 800px;
+        height: 30px;
+        border-width: 4px;
+    }
+
+    #lottie-rusty-container {
+    width: 350px !important;  
+    height: 260px !important; 
+    min-width: 350px;
+    min-height: 260px;
+}
+
+    #lottie-rusty-container .in-header,
+    #lottie-rusty-container svg {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important; 
+    max-height: none !important;
+    transform: scale(1.5); 
+}
+
+    /* Introduction */
+    .world-content {
+        padding-top: 280px;
+    }
+
+    .introduction {
+        min-height: 55vh;
+        padding: 40px 150px;
+    }
+
+    .intro-card {
+        max-width: 1600px;
+        opacity: 1 !important;     
+        transform: none !important;  
+        transition: none !important;  
+        position: relative !important; 
+        top: auto !important;
+    }
+
+    .main-title {
+        font-size: 8rem;
+        margin-bottom: 60px;
+    }
+
+    .mission-text p {
+        font-size: 2.4rem;
+        line-height: 1.8;
+        margin-bottom: 25px;
+    }
+
+    .mission-highlight {
+        font-size: 2rem;
+        padding: 35px 55px;
+        border-radius: 20px;
+    }
+
+    /* Zone de jeu */
+    .search-area {
+        padding: 150px 150px;
+    }
+
+    .game-layer {
+        max-width: 2400px;
+        border-radius: 30px;
+    }
+
+    /* Boutique */
+    .shop-section h2 {
+        font-size: 4.5rem;
+        padding-top: 150px;
+        padding-bottom: 60px;
+    }
+
+    .carousel-inner {
+        max-width: 2400px;
+        padding: 80px 100px 150px;
+        min-height: 850px;
+        border-radius: 40px;
+    }
+
+    .shop-card-container {
+        gap: 60px;
+    }
+
+    .shop-card-left {
+        width: 650px;
+    }
+
+    .shop-card-left img {
+        height: 800px !important;
+    }
+
+    .shop-card-right {
+        max-width: 900px;
+    }
+
+    .shop-card-right h3 {
+        font-size: 4.5rem;
+        margin-bottom: 20px;
+    }
+
+    .shop-card-right .price {
+        font-size: 3rem;
+        margin-bottom: 30px;
+    }
+
+    .shop-card-right .description {
+        font-size: 1.8rem;
+        line-height: 2;
+        margin-bottom: 40px;
+        padding-right: 100px;
+    }
+
+    .shop-card-right .status-msg {
+        font-size: 1.4rem;
+        letter-spacing: 2px;
+    }
+
+    /* Boutons carrousel */
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 120px !important;
+        height: 120px !important;
+        border-width: 5px;
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        width: 55px !important;
+        height: 55px !important;
+    }
+
+    /* Footer */
+    .rusty-footer {
+        padding: 130px 150px 60px;
+        border-top: 8px solid #FF7F50;
+    }
+
+    .footer-container {
+        max-width: 2400px;
+        gap: 130px;
+    }
+
+    .footer-section h3 {
+        font-size: 2.6rem;
+        margin-bottom: 50px;
+        letter-spacing: 2px;
+    }
+
+    .social-links {
+        gap: 35px;
+    }
+
+    .social-links a {
+        font-size: 4.5rem;
+    }
+
+    .software-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 40px;
+    }
+
+    .software-item {
+        padding: 20px 35px;
+        font-size: 1.7rem;
+        border-radius: 12px;
+    }
+
+    .software-item i {
+        font-size: 2rem;
+    }
+
+    .footer-bottom {
+        font-size: 1.4rem;
+        margin-top: 100px;
+        padding-top: 30px;
+    }
+
+    /* Notification de scroll */
+    .scroll-notification {
+        padding: 25px 70px;
+        border-radius: 35px;
+        border-width: 5px;
+        font-size: 1.6rem;
+    }
+
+    .scroll-notification-icon {
+        font-size: 2rem;
+        margin-right: 15px;
+    }
+
+    .scroll-notification-counter {
+        font-size: 1.4rem;
+        padding: 8px 20px;
+        margin-left: 15px;
+        border-width: 3px;
+    }
+}
