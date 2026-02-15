@@ -1,4 +1,4 @@
-# rusty_game
+# RUSTY - Projet Jeu 
 Jeu web interactif - Projet personnel MMI
 
 ## ⚠️ Droits et Propriété Intellectuelle
