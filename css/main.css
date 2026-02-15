@@ -1,0 +1,1094 @@
+/* ================================================================
+   RUSTY - FEUILLE DE STYLE PRINCIPALE
+   Version responsive avec container à ratio fixe
+   
+   Organisation du fichier :
+   1. Configuration de base
+   2. Écran de chargement
+   3. Header et navigation
+   4. Sections du contenu
+   5. Zone de jeu
+   6. Boutique
+   7. Footer
+   8. Animations
+   9. Media queries
+   ================================================================ */
+
+
+/* ================================================================
+   1. CONFIGURATION DE BASE & RESET
+   ================================================================ */
+
+/* Reset des marges et paddings + box-sizing pour tous les éléments */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* Configuration du body et html */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh; 
+    background-color: #36454F; /* Gris ardoise foncé */
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    overflow-x: hidden; /* Empêche le scroll horizontal */
+    scroll-behavior: smooth; /* Scroll fluide entre les sections */
+}
+
+/* Quand le dashboard est visible, on masque la scrollbar */
+body:has(#dashboard-content:not(.hidden)) {
+    overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+    background-color: #3b3f4a;
+}
+
+/* Masque la scrollbar sur Chrome/Safari */
+body:has(#dashboard-content:not(.hidden))::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* ================================================================
+   2. ÉCRAN DE CHARGEMENT
+   Affiché au démarrage du site
+   ================================================================ */
+
+/* Wrapper full screen du loader */
+#loader-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Au-dessus de tout */
+    background: rgba(18, 18, 18, 0.7);
+    backdrop-filter: blur(10px); /* Effet de flou en arrière-plan */
+    transition: opacity 0.5s ease, visibility 0.5s;
+}
+
+/* Carte contenant l'animation et l'UI du loader */
+.card_loader {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: inset 0 0 100px rgba(0,0,0,0.1);
+    background: rgba(26, 26, 29, 0.9) !important;
+    padding: 1rem;
+}
+
+/* Container de l'animation Lottie */
+#lottie-rusty {
+    /* Taille responsive avec min/max */
+    width: clamp(200px, 40vw, 350px);
+    height: clamp(200px, 40vw, 350px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    margin: 0 auto;
+}
+
+/* Container des éléments d'interface (barre + bouton + %) */
+.ui-container {
+    width: 100%;
+    max-width: 500px;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Container de la barre de progression */
+.progress-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    height: clamp(10px, 1.5vw, 12px);
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #36454F;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+/* Barre de progression qui se remplit */
+#progress-bar {
+    width: 0%; /* Démarre à 0% */
+    height: 100%;
+    background: #FF7F50; /* Corail */
+    border-radius: 20px;
+    animation: move-stripes 0.6s linear infinite; /* Animation de rayures */
+}
+
+/* Texte affichant le pourcentage */
+.loading-text {
+    color: #98FB98; /* Vert pale */
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    font-weight: bold;
+    margin-top: 15px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+/* Bouton pour initialiser l'interface (apparaît à 100%) */
+#enter-btn {
+    padding: clamp(12px, 2vw, 15px) clamp(30px, 5vw, 40px);
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    font-weight: 900;
+    background-color: #FF7F50;
+    color: #1A1A1D;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    transition: transform 0.2s, background-color 0.2s;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Effet hover sur le bouton */
+#enter-btn:hover {
+    transform: scale(1.05); /* Légère augmentation de taille */
+    background-color: #FFDAB9; /* Pêche clair */
+}
+
+
+/* ================================================================
+   3. DASHBOARD PRINCIPAL
+   Container du site une fois le chargement terminé
+   ================================================================ */
+
+#dashboard-content {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: transparent !important;
+    opacity: 0; /* Invisible au début */
+    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.8s ease;
+    visibility: hidden; 
+}
+
+/* État actif du dashboard (visible) */
+#dashboard-content.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* ================================================================
+   4. HEADER FIXE
+   Affiche les stats de Rusty et reste en haut de l'écran
+   ================================================================ */
+
+.rusty-header {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: clamp(15px, 3vw, 20px) clamp(20px, 5vw, 60px);
+    box-sizing: border-box;
+    z-index: 2000; /* Au-dessus du contenu */
+    background: rgba(26, 26, 29, 0.9);
+    backdrop-filter: blur(10px); /* Flou du contenu derrière */
+    border-bottom: 2px solid rgba(54, 69, 79, 0.2);
+    transition: transform 0.5s ease-in-out;
+}
+
+/* Zone des statistiques de Rusty */
+.rusty-stats {
+    flex: 1;
+    color: #FFFACD; /* Jaune crème */
+}
+
+/* Titre "RUSTY" */
+.rusty-stats h1 {
+    margin: 0;
+    font-family: 'Luckiest Guy', cursive, sans-serif;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    letter-spacing: 2px;
+    color: #98FB98; /* Vert pale */
+}
+
+/* Grille des stats (poids, taille, état) */
+.stats-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(10px, 2vw, 25px);
+    margin: 10px 0;
+    font-weight: 800;
+    font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+    text-transform: uppercase;
+}
+
+/* Container de la barre d'énergie */
+.energy-container {
+    width: 100%;
+    max-width: 350px;
+    height: clamp(12px, 1.5vw, 14px);
+    background: rgba(54, 69, 79, 0.1);
+    border-radius: 20px;
+    border: 2px solid #36454F;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+/* Barre d'énergie dynamique (se remplit avec le jeu) */
+#energy-bar {
+    width: 0%; /* Part de 0% */
+    height: 100%;
+    background-color: #98FB98;
+    transition: width 0.1s ease-out; /* Animation fluide */
+}
+
+/* Container pour l'animation Lottie dans le header */
+#lottie-rusty-container {
+    width: clamp(100px, 20vw, 200px);
+    height: clamp(65px, 13vw, 130px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Classe pour masquer le header (scroll vers le bas) */
+.header-hidden {
+    transform: translateY(-100%); /* Remonte hors écran */
+}
+
+/* Animation d'entrée des éléments du header */
+.rusty-header h1, 
+.stats-grid span, 
+.energy-container {
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: all 0.6s ease-out;
+}
+
+/* Apparition séquentielle des éléments */
+#dashboard-content.active .rusty-header h1 { 
+    opacity: 1; 
+    transform: translateX(0); 
+    transition-delay: 0.4s; /* Délai d'entrée */
+}
+
+#dashboard-content.active .stats-grid span { 
+    opacity: 1; 
+    transform: translateX(0); 
+    transition-delay: 0.6s; 
+}
+
+#dashboard-content.active .energy-container { 
+    opacity: 1; 
+    transform: translateX(0); 
+    transition-delay: 0.8s; 
+}
+
+
+/* ================================================================
+   5. CONTENU PRINCIPAL
+   Zone scrollable du site
+   ================================================================ */
+
+.world-content {
+    /* Padding-top pour compenser le header fixe */
+    padding-top: clamp(150px, 20vh, 210px);
+    width: 100%;
+}
+
+
+/* ================================================================
+   6. SECTION INTRODUCTION
+   Première section qui explique la mission
+   ================================================================ */
+
+.introduction {
+    min-height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 clamp(20px, 5vw, 60px);
+    position: relative;
+}
+
+/* Carte contenant le texte d'introduction */
+.intro-card {
+    padding: clamp(20px, 5vw, 40px);
+    max-width: 800px;
+    text-align: center;
+    position: sticky;
+    top: 50%;
+    z-index: 10;
+    opacity: 0.3; /* Légèrement transparent par défaut */
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Titre principal */
+.main-title {
+    font-family: 'Luckiest Guy', cursive;
+    font-size: clamp(2rem, 6vw, 4rem);
+    color: #FFFACD;
+    text-shadow: 4px 4px 0px #36454F;
+    margin-bottom: clamp(15px, 3vw, 30px);
+    line-height: 1.2;
+}
+
+/* Paragraphes de texte de mission */
+.mission-text p {
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    line-height: 1.5;
+    color: #FFFFFE;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+/* Encadré avec la mission principale */
+.mission-highlight {
+    background: #FF7F50;
+    color: #1A1A1D;
+    padding: clamp(15px, 3vw, 20px) clamp(20px, 4vw, 30px);
+    border-radius: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    box-shadow: 6px 6px 0px #36454F;
+    transform: rotate(-1deg); /* Légère rotation pour l'effet */
+    margin-top: 20px;
+    display: inline-block;
+}
+
+
+/* ================================================================
+   7. ZONE DE JEU (SECTION LA PLUS IMPORTANTE !)
+   
+   CONCEPT CLÉ : Container à ratio fixe
+   - aspect-ratio maintient les proportions sur tous les écrans
+   - Les objets sont positionnés en % (relatif au container)
+   - Le background est intégré dans .game-layer
+   - Tout s'adapte automatiquement, rien ne bouge
+   ================================================================ */
+
+/* Section contenant la zone de jeu */
+.search-area {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: clamp(50px, 10vh, 100px) clamp(20px, 5vw, 60px);
+    position: relative;
+}
+
+/* 🎮 CONTAINER DE JEU - LE SECRET DU RESPONSIVE ! */
+.game-layer {
+    position: relative;
+    width: 100%;
+    max-width: 1920px; /* Limite pour très grands écrans */
+    margin: 0 auto;
+    
+    /* 🔑 ASPECT RATIO FIXE - S'adapte à l'image de fond */
+    aspect-ratio: 4 / 5; /* Ajuste selon ton image (largeur / hauteur) */
+    
+    /* Image de fond intégrée directement */
+    background: url('../img/Background.jpg') center/cover no-repeat;
+    
+    /* Style visuel */
+    border-radius: clamp(10px, 2vw, 20px);
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* 🎯 OBJETS COLLECTIBLES */
+.collectible {
+    position: absolute; /* Position absolue dans le container */
+    cursor: pointer; /* Change le curseur au survol */
+    z-index: 10;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    
+    /* Largeur en % pour s'adapter automatiquement */
+    width: 5%; /* Taille par défaut */
+}
+
+/* Images des objets */
+.collectible img {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(-5px 5px 0px rgba(0,0,0,0.3));
+}
+
+/* POSITIONNEMENT DES OBJETS (EN % DU CONTAINER) */
+/* Ces valeurs sont calculées selon la position dans l'image de fond */
+
+/* Haltère */
+#item-haltere {
+    top: 78%;  /* Position verticale */
+    left: 36.8%; /* Position horizontale */
+    width: 4.5%; /* Taille spécifique */
+}
+
+/* Gourde */
+#item-gourde {
+    top: 84%;
+    left: 68.5%;
+    width: 5.5%;
+}
+
+/* Serviette */
+#item-serviette {
+    top: 75%;
+    left: 59.5%;
+    width: 4%;
+}
+
+/* 🎨 EFFET HOVER sur les objets */
+.collectible:hover {
+    transform: scale(1.2) rotate(5deg); /* Grossit et tourne légèrement */
+    filter: drop-shadow(0 0 20px rgba(255, 250, 205, 0.9)); /* Lueur */
+}
+
+/* 🎭 ANIMATION DE COLLECTE */
+.collected {
+    transform: translateY(-150px) scale(0) rotate(360deg); /* Monte + rétrécit + tourne */
+    opacity: 0; /* Disparaît */
+    pointer-events: none; /* N'est plus cliquable */
+}
+
+
+/* ================================================================
+   8. SECTION BOUTIQUE
+   Verrouillée jusqu'à la victoire
+   ================================================================ */
+
+.shop-section {
+    background-color: #3b3f4a;
+    padding: 0 clamp(10px, 3vw, 40px);
+    padding-bottom: clamp(40px, 8vh, 80px);
+}
+
+/* Titre de la boutique */
+.shop-section h2 {
+    text-align: center;
+    padding-top: clamp(80px, 15vh, 160px);
+    padding-bottom: clamp(20px, 4vh, 35px);
+    font-family: 'Luckiest Guy', cursive, sans-serif;
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    color: #FFFACD;
+}
+
+/* Container du carrousel Bootstrap */
+.carousel-inner {
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: clamp(15px, 3vw, 30px);
+    padding: clamp(20px, 4vw, 50px);
+    padding-bottom: clamp(40px, 8vw, 100px);
+    min-height: clamp(400px, 60vh, 550px);
+    width: 90%;
+    margin: 0 auto;
+}
+
+/* Container de chaque carte produit */
+.shop-card-container {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(15px, 3vw, 30px);
+    width: 100%;
+    flex-wrap: wrap; /* Passe en colonne sur mobile */
+}
+
+/* === PARTIE GAUCHE : IMAGE DU PRODUIT === */
+.shop-card-left {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    width: clamp(200px, 35vw, 400px);
+}
+
+.shop-card-left img {
+    height: clamp(250px, 40vh, 450px) !important;
+    width: auto !important;
+    object-fit: contain; /* Garde les proportions */
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
+}
+
+/* === PARTIE DROITE : INFOS PRODUIT === */
+.shop-card-right {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    max-width: 600px;
+    min-width: 250px;
+}
+
+/* Nom du produit */
+.shop-card-right h3 {
+    font-family: 'Luckiest Guy', cursive;
+    font-size: clamp(1.5rem, 4vw, 2.8rem);
+    color: #FFFACD;
+    margin-bottom: 5px;
+}
+
+/* Prix */
+.shop-card-right .price {
+    font-family: 'Luckiest Guy', cursive;
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    color: #20FA0B; /* Vert fluo */
+    margin-bottom: 20px;
+}
+
+/* Description */
+.shop-card-right .description {
+    color: #ffffff;
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    line-height: 1.6;
+    margin-bottom: 25px;
+    opacity: 0.9;
+    text-align: justify;
+    padding-right: clamp(10px, 3vw, 70px);
+}
+
+/* Message de statut (non disponible) */
+.shop-card-right .status-msg {
+    font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+    font-weight: bold;
+    color: #FF6700; /* Orange */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* === BOUTONS DE NAVIGATION DU CARROUSEL === */
+.carousel-control-prev,
+.carousel-control-next {
+    width: clamp(50px, 8vw, 70px) !important;
+    height: clamp(50px, 8vw, 70px) !important;
+    padding: 0 !important;
+    background: linear-gradient(135deg, rgba(255, 127, 80, 0.8), rgba(255, 127, 80, 0.6)) !important;
+    border-radius: 50% !important; /* Boutons ronds */
+    border: 3px solid rgba(152, 251, 152, 0.4);
+    opacity: 0.9 !important;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    
+    /* Centrage de l'icône */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    /* Position fixe sur les côtés */
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+}
+
+/* Position du bouton précédent */
+.carousel-control-prev {
+    left: clamp(10px, 3vw, 40px) !important;
+}
+
+/* Position du bouton suivant */
+.carousel-control-next {
+    right: clamp(10px, 3vw, 40px) !important;
+}
+
+/* Effet hover sur les boutons */
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    background: linear-gradient(135deg, rgba(255, 127, 80, 1), rgba(255, 127, 80, 0.8)) !important;
+    border-color: rgba(152, 251, 152, 0.8) !important;
+    transform: translateY(-50%) scale(1.15) rotate(5deg) !important; /* Grossit et tourne */
+    box-shadow: 0 12px 30px rgba(255, 127, 80, 0.5) !important;
+}
+
+/* Icônes des boutons */
+.carousel-control-prev-icon, 
+.carousel-control-next-icon {
+    filter: brightness(0) invert(1) !important; /* Met en blanc */
+    width: clamp(20px, 4vw, 30px) !important;
+    height: clamp(20px, 4vw, 30px) !important;
+}
+
+/* === ÉTAT VERROUILLÉ DE LA BOUTIQUE === */
+.shop-section {
+    pointer-events: none; /* Désactive les interactions */
+    user-select: none; /* Empêche la sélection */
+    position: relative;
+}
+
+/* Overlay sombre sur la boutique verrouillée */
+.shop-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(59, 63, 74, 0.85);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Flou sur le contenu verrouillé */
+.shop-section > * {
+    position: relative;
+    z-index: 2;
+    filter: blur(15px);
+    transition: filter 0.5s ease;
+}
+
+/* === ÉTAT DÉVERROUILLÉ === */
+body.shop-unlocked .shop-section {
+    pointer-events: auto; /* Réactive les interactions */
+    user-select: auto;
+}
+
+body.shop-unlocked .shop-section::before {
+    opacity: 0; /* Enlève l'overlay */
+    transition: opacity 0.5s ease;
+}
+
+body.shop-unlocked .shop-section > * {
+    filter: blur(0); /* Enlève le flou */
+}
+
+
+/* ================================================================
+   9. FOOTER
+   Informations et crédits en bas de page
+   ================================================================ */
+
+.rusty-footer {
+    background: #1A1A1D;
+    color: #FFFACD;
+    padding: clamp(30px, 6vh, 60px) clamp(10px, 3vw, 20px) 20px;
+    border-top: 6px solid #FF7F50;
+}
+
+/* Container principal du footer */
+.footer-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: clamp(20px, 4vw, 40px);
+}
+
+/* Titres des sections footer */
+.footer-section h3 {
+    font-family: 'Luckiest Guy', cursive;
+    color: #98FB98;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+}
+
+/* === RÉSEAUX SOCIAUX === */
+.social-links {
+    display: flex;
+    gap: clamp(15px, 3vw, 20px);
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+/* Liens des réseaux */
+.social-links a {
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    color: #FFFACD;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: inline-block;
+}
+
+/* Effet hover alterné (rotation droite) */
+.social-links a:nth-child(odd):hover {
+    color: #FF7F50;
+    transform: rotate(12deg) scale(1.2);
+    filter: drop-shadow(0 0 7px rgba(255, 127, 80, 0.7));
+}
+
+/* Effet hover alterné (rotation gauche) */
+.social-links a:nth-child(even):hover {
+    color: #FF7F50;
+    transform: rotate(-12deg) scale(1.2);
+    filter: drop-shadow(0 0 7px rgba(255, 127, 80, 0.7));
+}
+
+/* === GRILLE DES LOGICIELS === */
+.software-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+/* Item logiciel */
+.software-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+}
+
+.software-item i {
+    color: #98FB98;
+}
+
+/* === COPYRIGHT === */
+.footer-bottom {
+    text-align: center;
+    margin-top: clamp(30px, 5vh, 50px);
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 250, 205, 0.1);
+    font-size: clamp(0.6rem, 1.2vw, 0.8rem);
+    opacity: 0.6;
+}
+
+
+/* ================================================================
+   10. CLASSES UTILITAIRES
+   ================================================================ */
+
+/* Masque un élément complètement */
+.hidden {
+    display: none !important;
+}
+
+
+/* ================================================================
+   11. ANIMATIONS KEYFRAMES
+   ================================================================ */
+
+/* Animation des rayures de la barre de progression */
+@keyframes move-stripes {
+    from { background-position: 0 0; }
+    to { background-position: 42px 0; }
+}
+
+/* Animation d'apparition depuis le bas */
+@keyframes fadeInUp {
+    from { 
+        opacity: 0; 
+        transform: translateY(40px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+/* Animation de pulsation */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+
+/* ================================================================
+   12. NOTIFICATION DE SCROLL BLOQUÉ
+   Apparaît quand le joueur essaie de scroller sans avoir tout collecté
+   ================================================================ */
+
+.scroll-notification {
+    position: fixed;
+    bottom: -200px; /* Cachée par défaut */
+    opacity: 0;
+    visibility: hidden;
+    left: 50%;
+    transform: translateX(-50%);
+    
+    /* Style de la notification */
+    background: linear-gradient(135deg, #FF7F50, #FF6347);
+    color: #FFFACD;
+    padding: clamp(15px, 3vw, 20px) clamp(30px, 6vw, 50px);
+    border-radius: clamp(15px, 3vw, 25px);
+    
+    /* Bordure et ombre */
+    border: 3px solid #36454F;
+    box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.6),
+        0 0 0 3px rgba(152, 251, 152, 0.3),
+        inset 0 -3px 10px rgba(0, 0, 0, 0.2);
+    
+    /* Typographie */
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    font-weight: 900;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    
+    z-index: 10000; /* Au-dessus de tout */
+    transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    user-select: none;
+    pointer-events: none; /* Ne bloque pas les clics */
+}
+
+/* État visible */
+.scroll-notification.show {
+    bottom: clamp(30px, 5vh, 50px);
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Icône dans la notification */
+.scroll-notification-icon {
+    display: inline-block;
+    margin-right: 10px;
+    font-size: clamp(1.2rem, 3vw, 1.5rem);
+    animation: shake 0.5s ease-in-out;
+}
+
+/* Animation de secousse */
+@keyframes shake {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    25% { transform: translateX(-5px) rotate(-5deg); }
+    75% { transform: translateX(5px) rotate(5deg); }
+}
+
+/* Compteur d'objets */
+.scroll-notification-counter {
+    display: inline-block;
+    background: rgba(26, 26, 29, 0.8);
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-left: 10px;
+    font-size: clamp(0.8rem, 1.8vw, 1rem);
+    font-weight: bold;
+    color: #98FB98;
+    border: 2px solid #98FB98;
+    box-shadow: 0 0 10px rgba(152, 251, 152, 0.5);
+}
+
+/* Animation de pulsation */
+.scroll-notification.show {
+    animation: notification-pulse 2s ease-in-out infinite;
+}
+
+@keyframes notification-pulse {
+    0%, 100% { 
+        transform: translateX(-50%) scale(1);
+        box-shadow: 
+            0 10px 40px rgba(0, 0, 0, 0.6),
+            0 0 0 3px rgba(152, 251, 152, 0.3);
+    }
+    50% { 
+        transform: translateX(-50%) scale(1.05);
+        box-shadow: 
+            0 15px 50px rgba(0, 0, 0, 0.8),
+            0 0 0 5px rgba(152, 251, 152, 0.6);
+    }
+}
+
+/* Effet de particules en rotation */
+.scroll-notification::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(45deg, 
+        transparent 30%, 
+        rgba(152, 251, 152, 0.1) 50%, 
+        transparent 70%);
+    border-radius: inherit;
+    z-index: -1;
+    animation: particle-rotate 3s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes particle-rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+/* ================================================================
+   13. MASQUAGE DE LA SCROLLBAR
+   ================================================================ */
+
+/* Chrome/Safari */
+body::-webkit-scrollbar {
+    display: none;
+}
+
+/* Firefox + IE/Edge */
+body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+
+/* ================================================================
+   14. MEDIA QUERIES - ADAPTATIONS RESPONSIVE
+   ================================================================ */
+
+/* === TABLETTES (≤ 1024px) === */
+@media (max-width: 1024px) {
+    /* Header en colonne sur tablette */
+    .rusty-header {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px 20px;
+    }
+
+    .introduction {
+        min-height: 110vh;
+    }
+
+    /* Animation Rusty en premier */
+    #lottie-rusty-container {
+        order: -1;
+        margin-bottom: 10px;
+    }
+
+    /* Centre les stats */
+    .stats-grid {
+        justify-content: center;
+    }
+
+    /* Centre la barre d'énergie */
+    .energy-container {
+        margin: 10px auto 0;
+    }
+
+    /* Cartes produit en colonne */
+    .shop-card-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .shop-card-right {
+        text-align: center;
+        max-width: 100%;
+    }
+
+    .shop-card-right .description {
+        text-align: center;
+        padding-right: 0;
+    }
+}
+
+/* === SMARTPHONES (≤ 768px) === */
+@media (max-width: 768px) {
+
+    .world-content {
+        padding-top: 50px;
+    }
+
+    .introduction {
+        min-height: 75vh;
+    }
+
+    /* Réduit le padding de la carte intro */
+    .intro-card {
+        padding: 15px;
+    }
+
+    /* Footer en colonne */
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    /* Centre les liens sociaux */
+    .social-links {
+        justify-content: center;
+    }
+
+    /* 2 colonnes pour les logiciels */
+    .software-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Objets légèrement plus gros sur mobile pour faciliter le touch */
+    .collectible {
+        width: 7%;
+    }
+
+    /* Haltère */
+    #item-haltere {
+        top: 77%;  /* Position verticale */
+        left: 36%; /* Position horizontale */
+        width: 6.5%; /* Taille spécifique */
+    }
+
+    /* Gourde */
+    #item-gourde {
+        top: 82.6%;
+        left: 67.5%;
+        width: 8%;
+    }
+
+    /* Serviette */
+    #item-serviette {
+        top: 74%;
+        left: 58.5%;
+        width: 6%;
+    }
+}
+
+@media (max-width: 429px) {
+
+.introduction {
+    min-height: 90vh;
+}
+
+    /* Réduit la taille du titre */
+    .rusty-stats h1 {
+        font-size: 1.5rem;
+    }
+
+    /* Stats encore plus petites */
+    .stats-grid {
+        font-size: 0.65rem;
+        gap: 8px;
+    }
+
+    /* Boutons carrousel plus petits */
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        width: 15px !important;
+        height: 15px !important;
+    }
+}
+
+/* === TRÈS GRANDS ÉCRANS (≥ 2560px) === */
+@media (min-width: 2560px) {
+    /* Augmente les espacements */
+    .rusty-header {
+        padding: 30px 100px;
+    }
+
+    .world-content {
+        padding-top: 250px;
+    }
+
+    /* Carte intro plus large */
+    .intro-card {
+        max-width: 1200px;
+    }
+
+    /* Carrousel plus large */
+    .carousel-inner {
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+}
