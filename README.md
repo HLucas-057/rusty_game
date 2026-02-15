@@ -1,5 +1,7 @@
 # RUSTY - Projet Jeu 
 Jeu web interactif - Projet personnel MMI
+/!\ Ce site est adapté pour un usage sur mobile, cependant pour une expérience maximal il est conseillé de le consulter sur ordinateur /!\
+  - En cas de soucis d'adptation sur écran, merci de me signaler le problème via un des moyens de contact énoncé plus bas
 
 ## ⚠️ Droits et Propriété Intellectuelle
 
