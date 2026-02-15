@@ -1070,26 +1070,114 @@ body {
     }
 }
 
-/* === TRÈS GRANDS ÉCRANS (≥ 2560px) === */
-@media (min-width: 2560px) {
-    /* Augmente les espacements */
-    .rusty-header {
-        padding: 30px 100px;
+@media screen and (min-width: 1600px) {
+    /* On réduit la zone pour remonter le contenu */
+    .introduction {
+        min-height: 60vh; 
+        padding-top: 0;
     }
 
     .world-content {
-        padding-top: 250px;
+        padding-top: 180px; 
     }
 
-    /* Carte intro plus large */
     .intro-card {
-        max-width: 1200px;
+        top: 40%; 
+        transform: translateY(-20%);
+    }
+}
+
+/* === TRÈS GRANDS ÉCRANS (≥ 2560px) === */
+@media (min-width: 2560px) {
+
+    .rusty-header {
+        padding: 40px 100px; /* Plus de hauteur et de marge latérale */
+        border-bottom: 4px solid rgba(152, 251, 152, 0.3); /* Bordure plus marquée */
     }
 
-    /* Carrousel plus large */
+    .rusty-stats h1 {
+        font-size: 5rem; /* Le nom RUSTY devient massif */
+        letter-spacing: 5px;
+    }
+
+    .stats-grid {
+        gap: 50px; /* Plus d'espace entre Poids, Taille et État */
+        font-size: 1.5rem; /* Texte des stats plus lisible */
+        margin: 20px 0;
+    }
+
+    .energy-container {
+        max-width: 600px; /* Barre d'énergie plus longue */
+        height: 25px; /* Plus épaisse */
+        border-width: 3px;
+    }
+
+    #lottie-rusty-container {
+        width: 350px; /* L'animation Lottie prend plus de place */
+        height: 250px;
+        object-fit: contain;
+    }
+
+    .introduction {
+        min-height: 40vh; 
+        display: flex;
+        align-items: flex-start; 
+        padding-top: 50px;
+    }
+
+    .world-content {
+        padding-top: 150px;
+    }
+
+    .intro-card {
+        max-width: 1400px;
+        margin-top: -100px; 
+        opacity: 1 !important; 
+        transform: none !important; 
+        transition: none !important;
+    }
+
+    .main-title {
+        font-size: 7rem; 
+    }
+
     .carousel-inner {
         max-width: 1600px;
         margin: 0 auto;
     }
 
+    /* === AJOUT COHÉRENCE FOOTER === */
+    .rusty-footer {
+        padding: 100px 50px 40px; /* Plus d'espace en haut et sur les côtés */
+    }
+
+    .footer-container {
+        max-width: 1800px; /* On élargit le container pour occuper l'espace */
+        gap: 100px; /* Plus d'espace entre les colonnes */
+    }
+
+    .footer-section h3 {
+        font-size: 2rem; /* Titres plus imposants */
+        margin-bottom: 40px;
+    }
+
+    .social-links a {
+        font-size: 3.5rem; /* Icônes LinkedIn/Insta plus grandes */
+    }
+
+    .software-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Items plus larges */
+        gap: 30px;
+    }
+
+    .software-item {
+        padding: 15px 25px;
+        font-size: 1.2rem;
+    }
+
+    .footer-bottom {
+        font-size: 1rem;
+        margin-top: 80px;
+    }
 }
+
