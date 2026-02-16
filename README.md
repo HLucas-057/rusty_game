@@ -1,10 +1,10 @@
 # RUSTY - Projet Jeu 
 Jeu web interactif - Projet personnel MMI
+--> Lien vers le site web https://hlucas-057.github.io/rusty_game/
 
 /!\ Ce portfolio n'est pas encore dans sa version finale, mais il constitue une démonstration concrète de mes compétences actuelles en développement front-end et en intégration d'animations complexes. Le site est en évolution constante. /!\
 
 --> Lien vers la présentation du site web : https://youtu.be/tWK0CzGUwxQ
---> Lien vers le site web https://hlucas-057.github.io/rusty_game/
 
 ## ⚠️ Droits et Propriété Intellectuelle
 
